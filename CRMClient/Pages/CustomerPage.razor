@@ -1,0 +1,59 @@
+﻿@page "/CRM"
+
+<h1>CRM</h1>
+
+<p>This is CRM - client.</p>
+
+<button class="btn btn-primary" @onclick="load">Get Customers</button>
+
+@if (customers == null)
+{
+    <p><em>Press the button</em></p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Orders</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in customers)
+        {
+            <tr>
+                <td>@customer.Id</td>
+                <td>@customer.Name</td>
+                <td>@customer.Age</td>
+                <td>@customer.Orders.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private string baseUrl = "https://localhost:44342";
+    private List<Customer> customers;
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await load();
+    //}
+
+    protected async Task load()
+    {
+        try
+        {
+            HttpClient httpClient = new HttpClient();
+            customers = await httpClient.GetJsonAsync<List<Customer>>($"{baseUrl}/api/CRM");
+        }
+        catch
+        {
+
+        }
+
+    }
+}
