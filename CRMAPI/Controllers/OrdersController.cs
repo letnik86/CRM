@@ -23,10 +23,10 @@ namespace CRMAPI.Controllers
 
         // GET: api/Orders/id
         [HttpGet("{id}")]
-        public ActionResult<List<Order>> GetOrder(Guid id)
+        public async Task<ActionResult<List<Order>>> GetOrder(Guid id)
         {
             List<Order> orders = new List<Order>();
-            foreach (Order order in _context.Order)
+            await foreach (Order order in _context.Order)
             {
                 if (order.CustomerId.Equals(id))
                 {

@@ -34,14 +34,14 @@ namespace CRMAPI.Controllers
 
         // GET: api/Customers/Sum
         [HttpGet("{Sum}")]
-        public List<Customer> GetCustomer(double Sum)
+        public async Task<List<Customer>> GetCustomer(double Sum)
         {
             List<Customer> customers = new List<Customer>();
-            foreach (Order order in _context.Order)
+            await foreach (Order order in _context.Order)
             {
                 _context.Customer.FindAsync(order.CustomerId).Result.Orders.Add(order);
             }
-            foreach (Customer customer in _context.Customer)
+            await foreach (Customer customer in _context.Customer)
             {
                 if (customer.GetAmountSum() > Sum && customer.Orders.Any(e => e.Date > DateTime.Now.AddYears(-1)) && customer.Orders.All(a => a.Amount > 1000))
                 {
