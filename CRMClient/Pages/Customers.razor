@@ -1,14 +1,12 @@
-﻿@page "/CRM"
+﻿@page "/Customers"
 
-<h1>CRM</h1>
+<h1>Show Customers</h1>
 
-<p>This is CRM - client.</p>
-
-<button class="btn btn-primary" @onclick="load">Get Customers</button>
+<p>On this page you can see full Customers list</p>
 
 @if (customers == null)
 {
-    <p><em>Press the button</em></p>
+    <p><em>Loading..</em></p>
 }
 else
 {
@@ -38,17 +36,18 @@ else
 @code {
     private string baseUrl = "https://localhost:44342";
     private List<Customer> customers;
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    await load();
-    //}
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
 
-    protected async Task load()
+    private async Task load()
     {
         try
         {
             HttpClient httpClient = new HttpClient();
-            customers = await httpClient.GetJsonAsync<List<Customer>>($"{baseUrl}/api/CRM");
+            customers = await httpClient.GetJsonAsync<List<Customer>>($"{baseUrl}/api/Customers");
         }
         catch
         {

@@ -1,0 +1,52 @@
+﻿@page "/Add"
+
+<h1>Add Customer</h1>
+
+<p>On this page you can add new Customer</p>
+
+    <p>Please enter Customer details below:</p>
+
+    Enter Name: <input id="Name" type="text" @bind="customer.Name" placeholder="Name" /><br><br>
+    Enter Age: <input id="Age" type="text" @bind="customer.Age" placeholder="Age" /><br><br>
+    <input type="button" value="Create Customer" class="btn btn-primary" @onclick="load" /><br><br>
+
+    @if (response.StatusCode == System.Net.HttpStatusCode.OK)
+    {
+        <p>Customer created succesfully</p>
+    }
+    else
+    {
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            <p>Error..</p>
+        }
+        else
+        {
+
+        }
+
+    }
+
+@code
+          {
+          private string baseUrl="https://localhost:44342" ;
+          private Customer customer=new Customer();
+          HttpResponseMessage response=new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
+          private async Task load()
+          {
+          try
+          {
+          HttpClient httpClient=new HttpClient();
+          response=await httpClient.PostJsonAsync<HttpResponseMessage>($"{baseUrl}/api/Customers/", customer);
+            }
+            catch
+            {
+                response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+            }
+        }
+
+    }
+    @code
+{
+
+    }

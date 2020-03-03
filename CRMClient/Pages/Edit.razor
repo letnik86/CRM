@@ -1,0 +1,53 @@
+﻿@page "/Edit"
+
+<h1>Edit Customer</h1>
+
+<p>On this page you can put some changes to Customer entity.</p>
+
+<p>Please enter Customer details below:</p>
+
+<div><label>Please enter Cutomer ID.</label></div>
+
+Enter ID:<input id="Id" type="text" @bind="customer.Id" /><br><br>
+Enter Name:<input id="Name" type="text" @bind="customer.Name" placeholder="Enter Name" /><br><br>
+Enter Age:<input name="Age" id="Age" type="text" @bind="customer.Age" placeholder="Enter Age" /><br><br>
+
+<input type="button" value="Save Changes" class="btn btn-primary" @onclick="load" />
+
+@if (response.StatusCode == System.Net.HttpStatusCode.OK)
+{
+    <p>Customer edited succesfully</p>
+}
+else
+{
+    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+    {
+        <p>Error..</p>
+    }
+    else
+    {
+
+    }
+
+}
+
+@code
+{
+    private string baseUrl = "https://localhost:44342";
+    private Customer customer = new Customer();
+    private HttpResponseMessage response = new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
+
+    private async Task load()
+    {
+        try
+        {
+            HttpClient httpClient = new HttpClient();
+            await httpClient.PutJsonAsync($"{baseUrl}/api/Customers/{customer.Id}", customer);
+            response.StatusCode = System.Net.HttpStatusCode.OK;
+        }
+        catch
+        {
+            response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+        }
+    }
+}

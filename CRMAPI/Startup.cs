@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using NSwag.Generation.Processors.Security;
-using CustomersCRM.Data;
+using CRMAPI.Data;
 
 namespace CustomersCRM
 {
@@ -28,12 +28,31 @@ namespace CustomersCRM
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerDocument();
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v0.1";
+                    document.Info.Title = "Tionit test Middle CRM API";
+                    document.Info.Description = "ASP.NET Core 3 web API for Customers and Orders";
+                    document.Info.TermsOfService = "None";
+                    document.Info.Contact = new NSwag.OpenApiContact
+                    {
+                        Name = "Nikta Letov",
+                        Email = "letnik86@gmail.com",
+                        Url = "https://github.com/letnik86"
+                    };
+                    document.Info.License = new NSwag.OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = "https://example.com/license"
+                    };
+                };
+            });
             services.AddControllers();
 
-            services.AddDbContext<CustomersCRMContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("CustomersCRMContext")));
-            //services.AddSwagger();
+            services.AddDbContext<CRMAPIContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("CRMAPIContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +63,7 @@ namespace CustomersCRM
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();

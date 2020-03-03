@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,14 +9,13 @@ namespace CRM
 {
     public class Order
     {
-        private Guid id;
-        private DateTime date;
-        private Double amount;
-
         public Order() { }
 
-        public Guid Id { get => id; set => id = value; }
-        public DateTime Date { get => date; set => date = value; }
-        public double Amount { get => amount; set => amount = value; }
+        [Key]
+        public Guid Id { get; set; }
+        public DateTime Date { get; set; }
+        public double Amount { get; set; }
+        public Guid CustomerId { get; set; }
+
     }
 }

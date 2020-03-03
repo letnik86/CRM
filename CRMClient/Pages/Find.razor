@@ -1,0 +1,59 @@
+﻿@page "/Find"
+
+<h1>Find Orders by Customer</h1>
+
+<p>On this page you can find all orders for one customer by id</p>
+
+<div><label>Please enter Cutomer ID.</label></div>
+<div>
+    <input type="text" placeholder="Please enter Customer ID" size="34" @bind="id" />
+    <input type="button" value="Find Orders" class="btn btn-primary" @onclick="load" />
+</div>
+
+
+@if (orders == null)
+{
+    <p><em>Waiting for input.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Date</td>
+                    <td>@order.Amount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string baseUrl = "https://localhost:44342";
+    private Guid id = new Guid();
+    private List<Order> orders;
+
+    private async Task load()
+    {
+        try
+        {
+            HttpClient httpClient = new HttpClient();
+            orders = await httpClient.GetJsonAsync<List<Order>>($"{baseUrl}/api/Orders/{id}");
+        }
+        catch
+        {
+
+        }
+
+    }
+}

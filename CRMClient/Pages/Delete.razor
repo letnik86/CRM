@@ -1,0 +1,52 @@
+﻿@page "/Delete"
+
+<h1>Delete Customer</h1>
+
+<p>On this page you can delete customer by id.</p>
+<p>This action also delete all Customer's Orders!</p>
+
+<div><label>Please enter Cutomer ID.</label></div>
+
+<div>
+    <input type="text" placeholder="Please enter Customer ID" size="34" @bind="id" />
+    <input type="button" value="Delete Customer" class="btn btn-primary" @onclick="load" />
+</div>
+
+@if (response.StatusCode == System.Net.HttpStatusCode.OK)
+{
+    <p>Customer deleted succesfully</p>
+}
+else
+{
+    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+    {
+        <p>Customer not found...</p>
+    }
+    else
+    {
+
+    }
+
+}
+
+
+@code {
+    private string baseUrl = "https://localhost:44342";
+    private Guid id = new Guid();
+    HttpResponseMessage response=new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
+
+    private async Task load()
+    {
+        try
+        {
+            HttpClient httpClient = new HttpClient();
+            response = await httpClient.DeleteAsync($"{baseUrl}/api/Customers/{id}");
+        }
+        catch
+        {
+
+        }
+
+    }
+}
+

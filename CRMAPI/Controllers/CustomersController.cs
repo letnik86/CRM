@@ -5,56 +5,60 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CustomersCRM.Data;
 using CRM;
+using CRMAPI.Data;
 
-namespace CustomersCRM.Controllers
+namespace CRMAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CRMController : ControllerBase
+    public class CustomersController : ControllerBase
     {
-        private readonly CustomersCRMContext _context;
+        private readonly CRMAPIContext _context;
 
-        public CRMController(CustomersCRMContext context)
+        public CustomersController(CRMAPIContext context)
         {
             _context = context;
         }
 
-        // GET: api/CRM
+        // GET: api/Customers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
         {
+            foreach (Order order in _context.Order)
+            {
+                 _context.Customer.FindAsync(order.CustomerId).Result.Orders.Add(order);
+            }
             return await _context.Customer.ToListAsync();
         }
 
-        // GET: api/CRM/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(Guid id)
+        // GET: api/Customers/Sum
+        [HttpGet("{Sum}")]
+        public List<Customer> GetCustomer(double Sum)
         {
-            var customer = await _context.Customer.FindAsync(id);
-
-            if (customer == null)
+            List<Customer> customers = new List<Customer>();
+            foreach (Order order in _context.Order)
             {
-                return NotFound();
+                _context.Customer.FindAsync(order.CustomerId).Result.Orders.Add(order);
             }
-
-            return customer;
+            foreach (Customer customer in _context.Customer)
+            {
+                if (customer.GetAmountSum() > Sum && customer.Orders.Any(e => e.Date > DateTime.Now.AddYears(-1)) && customer.Orders.All(a => a.Amount > 1000))
+                {
+                    customers.Add(customer);
+                }
+            }
+            return customers;
         }
 
-        // PUT: api/CRM/5
+        // PUT: api/Customers/id
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomer(Guid id, Customer customer)
         {
-            if (id != customer.Id)
-            {
-                return BadRequest();
-            }
-
+            customer.Id = id;
             _context.Entry(customer).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -70,23 +74,22 @@ namespace CustomersCRM.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
-        // POST: api/CRM
+        // POST: api/Customers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
+
             _context.Customer.Add(customer);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }
 
-        // DELETE: api/CRM/5
+        // DELETE: api/Customers/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> DeleteCustomer(Guid id)
         {

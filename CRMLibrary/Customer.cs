@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,16 +9,28 @@ namespace CRM
 {
     public class Customer
     {
-        private Guid id;
-        private string name;
-        private short age;
-        private List<Order> orders = new List<Order>();
+        public Customer() 
+        {
+            this.Orders = new HashSet<Order>();
+        }
+        [Key]
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public short Age { get; set; }
 
-        public Customer() { }
+        [ForeignKey("CustomerId")]
+        public ICollection<Order> Orders { get; set; }
 
-        public Guid Id { get => id; set => id = value; }
-        public string Name { get => name; set => name = value; }
-        public short Age { get => age; set => age = value; }
-        public List<Order> Orders { get => orders; set => orders = value; }
+        public double GetAmountSum()
+        {
+            double sum = 0;
+            foreach (Order order in Orders)
+            {
+                sum += order.Amount;
+            }
+            return sum;
+        }
+
+
     }
 }
