@@ -1,7 +1,4 @@
 # CRM
-Tionit. Middle C# Developer test.
-
-Тестовое задание на вакансию «Middle .NET разработчик»
 
 Сущности:
 Клиент (Customer):
